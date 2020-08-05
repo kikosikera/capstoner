@@ -1,20 +1,30 @@
 Package: capstoner
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Mastering Software Development in R Capstone
+Version: 0.0.0.1
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Lucas",
+           family = "Zamora",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+           email = "lucas.e.zamora@gmail.com")
+Description: This package allows you to analyze the NOAA dataset in a friendly way.
+License: GPL (>= 3) | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Suggests: 
-    knitr,
-    rmarkdown
+Suggests: knitr,
+    rmarkdown,
+    testthat
+Imports: 
+    dplyr,
+    tidyr,
+    grid,
+    ggplot2,
+    leaflet,
+    magrittr,
+    stringr,
+    stringi,
+    lubridate,
+    readr
 VignetteBuilder: knitr
+

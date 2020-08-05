@@ -1,0 +1,105 @@
+---
+title: "capstoner"
+author: "Lucas Ezequiel Zamora"
+date: "4/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Package Description
+
+`capstoner` package reads and plots NOAA data from the [National Centers For Environmental  
+Information](https://www.ngdc.noaa.gov/nndc/struts/form?t=101650&s=1&d=1).
+
+
+## Functions
+
+Six functions are available; all exported for the user:
+
+Function                 | Description
+-------------------------|-------------------------------------------
+`eq_clean_data()`        | Clean the NOAA dataset
+`eq_clean_location()`    | Clean location from the dataset
+`geom_timeline()`        | Geom for plotting a time line of earthquakes
+`geom_timeline_label()`  | Labels for the time line plot
+`eq_map()`               | Plot a leaflet map of earthquakes 
+`eq_create_label()`      | Generates a label for a leaflet map
+
+
+## Load Packages
+
+```{r}
+library(capstoner) 
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(lubridate)
+```
+
+
+
+## Included data
+
+Data files included within the package are:
+
+```{r}
+file_name <- system.file("extdata", package = "capstoner")
+data <- readr::read_delim(file_name, quote = "", delim = "\t")
+```
+
+
+
+## Prepare data for the analysis
+The first thing that we must do before starting the analysis with the graphics is to clean the downloaded data since they are incomplete and wrong.
+
+For this we can use the function `eq_clean_data`. The function `eq_clean_location` is used internally by `eq_clean_data`.
+
+
+```{r, eval=FALSE}
+data <- eq_clean_data(data)
+```
+
+With the clean data we can already use them to later make the corresponding plots.
+
+
+
+## Visualize the NOAA earthquakes dataset on the time
+If we would like to visualize the times at which earthquakes occur within certain countries and show the dates on which the earthquakes occur, we can use the `geom_timeline` and `geom_timeline_label`.
+The first returns the plot and the second allows the magnitudes to be shown.
+
+```{r, eval=FALSE}
+library(dplyr)
+
+data %>%
+   capstoner::eq_clean_data() %>%
+   dplyr::filter(filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000)
+   ) %>%
+   ggplot2::ggplot(aes(
+       x = date,
+       y = country,
+       size = eq_primary,
+       colour = log(total_deaths)
+   )) +
+   geom_timeline() +
+   geom_timeline_label(n_max = 3)
+```
+
+
+
+## Visualize the NOAA earthquakes dataset on the space
+If we would like to visualize the space at which earthquakes occur within certain countries and show the dates on which the earthquakes occur, we can use the `eq_map` and `eq_create_label`.
+The first returns the plot and the second allows to see the information in a friendly format.
+
+
+```{r, eval=FALSE}
+library(dplyr)
+
+data %>%
+   capstoner::eq_clean_data() %>%
+   dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>%
+   dplyr::mutate(popup_text = eq_create_label(.)) %>%
+   eq_map(annot_col = "popup_text")
+```

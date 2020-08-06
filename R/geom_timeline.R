@@ -39,15 +39,16 @@
 #'
 #' data %>%
 #'    capstoner::eq_clean_data() %>%
-#'    dplyr::filter(filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000)
-#'    ) %>%
+#'    dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>%
 #'    ggplot2::ggplot(aes(
-#'       x = date,
-#'       y = country,
-#'       size = eq_primary,
-#'       colour = log(total_deaths)
+#'       x = DATE
+#'       y = COUNTRY,
+#'       size = EQ_PRIMARY,
+#'       colour = log(TOTAL_DEATHS)
 #'       )) +
-#'    geom_timeline()
+#'    geom_timeline() +
+#'    ggplot2::labs(size = "Richter scale value", color = "# deaths") +
+#     ggplot2::theme(legend.position='bottom')
 #' }
 geom_timeline <- function(
   mapping = NULL, data = NULL, stat = "identity",
@@ -79,32 +80,19 @@ GeomTimeline <- ggplot2::ggproto("GeomTimeline", ggplot2::Geom,
 
    default_aes = ggplot2::aes(
 
-     y        = 0.25,
-     colour   = "grey",
-     size     = 1,
-     alpha    = 0.25,
-     shape    = 19,
-     fill     = "black",
+     y = 0.25,
+     colour = "grey",
+     size = 1,
+     alpha = 0.25,
+     shape = 19,
+     fill = "black",
      linesize = 0.5,
      linetype = 1 ,
      fontsize = 10,
-     stroke   = 1
+     stroke = 1
    ),
 
    draw_key = ggplot2::draw_key_point,
-
-   setup_data = function(data, params) {
-
-     if ("colour" %in% colnames(data)) {
-       warning(paste(
-         "missing values for colour.",
-         "They were replaced with the minimum value."
-       ))
-       data$colour[is.na(data$colour)] <-
-         min(data$colour, na.rm = TRUE)
-     }
-     data
-   },
 
    draw_panel = function(data, panel_scales, coord) {
      coords <- data %>%
@@ -115,11 +103,11 @@ GeomTimeline <- ggplot2::ggproto("GeomTimeline", ggplot2::Geom,
      }
 
      points <- grid::pointsGrob(
-       x    = coords$x,
-       y    = coords$y,
+       x = coords$x,
+       y = coords$y,
        size = grid::unit(coords$size / 5, "char"),
-       pch  = coords$shape,
-       gp   = grid::gpar(
+       pch = coords$shape,
+       gp = grid::gpar(
                 col = coords$colour %>%
                 scales::alpha(coords$alpha),
                 fill = coords$fill %>%
@@ -131,11 +119,11 @@ GeomTimeline <- ggplot2::ggproto("GeomTimeline", ggplot2::Geom,
      y_lines <- unique(coords$y)
 
      lines <- grid::polylineGrob(
-       x  = grid::unit(
+       x = grid::unit(
          rep(c(0, 1), each = length(y_lines)),
          "npc"
        ),
-       y  = grid::unit(c(y_lines, y_lines), "npc"),
+       y = grid::unit(c(y_lines, y_lines), "npc"),
        id = rep(seq_along(y_lines), 2),
        gp = grid::gpar(
          col = "grey",
@@ -155,6 +143,8 @@ GeomTimeline <- ggplot2::ggproto("GeomTimeline", ggplot2::Geom,
 #'
 #' Return a \code{\link[ggplot2]{layer}} representing earthquakes annotations to
 #' be added after \code{\link{geom_timeline}}.
+#'
+#' @param n_max Max number of lebels to add in the plot.
 #'
 #' @details Aesthetics:
 #' \code{geom_timeline_label} understands the following aesthetics
@@ -187,14 +177,16 @@ GeomTimeline <- ggplot2::ggproto("GeomTimeline", ggplot2::Geom,
 #'    capstoner::eq_clean_data() %>%
 #'    dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>%
 #'    ggplot2::ggplot(aes(
-#'       x = date,
-#'       y = country,
-#'       size = eq_primary,
-#'       colour = log(total_deaths),
-#'       label  = location_name
+#'       x = DATE,
+#'       y = COUNTRY,
+#'       size = EQ_PRIMARY,
+#'       colour = log(TOTAL_DEATH),
+#'       label = LOCATION_NAME
 #'    )) +
 #'    geom_timeline() +
-#'    geom_timeline_label(n_max = 3)
+#'    geom_timeline_label(aes(label=LOCATION_NAME), n_max = 4) +
+#     ggplot2::labs(size = "Richter scale value", color = "# deaths") +
+#     ggplot2::theme(legend.position='bottom')
 #' }
 #'
 geom_timeline_label <- function(
@@ -236,30 +228,21 @@ GeomTimelineLabel <- ggplot2::ggproto(
 
 
   default_aes  = ggplot2::aes(
-    y             = 0.25,
-    colour        = "black",
-    size          = 1,
-    alpha         = 0.25,
-    shape         = 19,
-    linesize      = 0.5,
-    linetype      = 1,
-    fontsize      = 10,
-    stroke        = 1,
-    angle         = 60
+    y = 0.25,
+    colour = "black",
+    size = 1,
+    alpha = 0.25,
+    shape = 19,
+    linesize = 0.5,
+    linetype = 1,
+    fontsize = 10,
+    stroke = 1,
+    angle = 60
   ),
 
   draw_key = ggplot2::draw_key_blank,
 
   setup_data = function(data, params) {
-
-    if (!("size" %in% colnames(data))) {
-      warning(paste(
-        "size is not provided.\n",
-        "a random sample of points will be used"
-      ))
-      data$size <- sample.int(nrow(data))
-    }
-
 
 
     if (!is.null(params$n_max)) {
@@ -270,7 +253,6 @@ GeomTimelineLabel <- ggplot2::ggproto(
         dplyr::top_n(params$n_max, size_rank) %>%
         dplyr::ungroup() %>%
         dplyr::select(-size_rank)
-      print(data)
     }
 
     data
@@ -292,24 +274,24 @@ GeomTimelineLabel <- ggplot2::ggproto(
     offset <- 0.2 / n_grp
 
     lines <- grid::polylineGrob(
-      x  = grid::unit(c(coords$x, coords$x), "npc"),
-      y  = grid::unit(c(coords$y, coords$y + offset), "npc"),
+      x = grid::unit(c(coords$x, coords$x), "npc"),
+      y = grid::unit(c(coords$y, coords$y + offset), "npc"),
       id = rep(seq_len(nrow(coords)), 2),
       gp = grid::gpar(
-        col  = coords$colour,
-        lwd  = grid::unit(coords$linesize, "mm"),
-        lty  = coords$linetype
+        col = coords$colour,
+        lwd = grid::unit(coords$linesize, "mm"),
+        lty = coords$linetype
       )
     )
 
     names <- grid::textGrob(
-      x     = grid::unit(coords$x, "npc"),
-      y     = grid::unit(coords$y + offset, "npc"),
+      x = grid::unit(coords$x, "npc"),
+      y = grid::unit(coords$y + offset, "npc"),
       label = coords$label,
-      just  = c("left", "bottom"),
-      rot   = 60,
-      gp    = grid::gpar(
-        col      = coords$colour,
+      just = c("left", "bottom"),
+      rot = 60,
+      gp = grid::gpar(
+        col = coords$colour,
         fontsize = grid::unit(coords$fontsize, "points")
       ),
       check.overlap = FALSE

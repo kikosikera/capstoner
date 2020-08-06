@@ -5,7 +5,7 @@
 \alias{GeomTimeline}
 \title{Creates a theme for timeline visualization.}
 \format{
-An object of class \code{GeomTimeline} (inherits from \code{Geom}, \code{ggproto}, \code{gg}) of length 6.
+An object of class \code{GeomTimeline} (inherits from \code{Geom}, \code{ggproto}, \code{gg}) of length 5.
 }
 \usage{
 GeomTimeline

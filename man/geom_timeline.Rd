@@ -94,14 +94,14 @@ data <- readr::read_delim('path_to_data', quote = "", delim = "\t")
 
 data \%>\%
    capstoner::eq_clean_data() \%>\%
-   dplyr::filter(filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000)
-   ) \%>\%
+   dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) \%>\%
    ggplot2::ggplot(aes(
-      x = date,
-      y = country,
-      size = eq_primary,
-      colour = log(total_deaths)
+      x = DATE
+      y = COUNTRY,
+      size = EQ_PRIMARY,
+      colour = log(TOTAL_DEATHS)
       )) +
-   geom_timeline()
+   geom_timeline() +
+   ggplot2::labs(size = "Richter scale value", color = "# deaths") +
 }
 }

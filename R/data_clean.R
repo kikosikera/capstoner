@@ -32,7 +32,7 @@ eq_clean_data <- function(raw_data){
     # Create new column data and parse lat and long columns.
     dplyr::mutate_(DATE = ~lubridate::ymd(paste(YEAR, MONTH, DAY)),
                    LATITUDE = ~as.numeric(LATITUDE),
-                   LONGITUDE = ~as.numeric(LONGITUDE))# %>%
+                   LONGITUDE = ~as.numeric(LONGITUDE)) %>%
 
     # Clean nan of the columns cleaned.
     dplyr::filter_(~!is.na(DATE)) %>%

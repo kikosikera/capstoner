@@ -32,7 +32,7 @@ eq_map <- function(data, annot_col) {
   map <- leaflet::leaflet() %>%
     leaflet::addTiles() %>%
     leaflet::addCircleMarkers(lng = data$LONGITUDE, lat = data$LATITUDE,
-                              radius = data$EQ_PRIMARY, weight = 1,
+                              radius = as.numeric(data$EQ_PRIMARY), weight = 1,
                               popup = data[[annot_col]])
   return(map)
 }

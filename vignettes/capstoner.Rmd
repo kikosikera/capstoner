@@ -1,8 +1,12 @@
 ---
 title: "capstoner"
 author: "Lucas Ezequiel Zamora"
-date: "4/8/2020"
-output: html_document
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{capstoner}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -45,8 +49,8 @@ library(lubridate)
 
 Data files included within the package are:
 
-```{r}
-file_name <- system.file("extdata", package = "capstoner")
+```{r, eval=FALSE}
+file_name <- system.file("extdata/signif.txt", package = "capstoner")
 data <- readr::read_delim(file_name, quote = "", delim = "\t")
 ```
 

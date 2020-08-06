@@ -25,6 +25,7 @@ Imports:
     stringr,
     stringi,
     lubridate,
-    readr
+    readr,
+    scales
 VignetteBuilder: knitr
 

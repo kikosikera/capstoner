@@ -1,2 +1,4 @@
 ^capstoner\.Rproj$
 ^\.Rproj\.user$
+^doc$
+^Meta$

@@ -54,6 +54,8 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
+\item{n_max}{Max number of lebels to add in the plot.}
+
 \item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}. These are
 often aesthetics, used to set an aesthetic to a fixed value, like
 \code{colour = "red"} or \code{size = 3}. They may also be parameters
@@ -94,14 +96,14 @@ data \%>\%
    capstoner::eq_clean_data() \%>\%
    dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) \%>\%
    ggplot2::ggplot(aes(
-      x = date,
-      y = country,
-      size = eq_primary,
-      colour = log(total_deaths),
-      label  = location_name
+      x = DATE,
+      y = COUNTRY,
+      size = EQ_PRIMARY,
+      colour = log(TOTAL_DEATH),
+      label = LOCATION_NAME
    )) +
    geom_timeline() +
-   geom_timeline_label(n_max = 3)
+   geom_timeline_label(aes(label=LOCATION_NAME), n_max = 4) +
 }
 
 }

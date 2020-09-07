@@ -1,5 +1,7 @@
 # Capstone
 
+[![Build Status](https://travis-ci.org/lezamora/capstoner.svg?branch=master)](https://travis-ci.org/lezamora/capstoner)
+
 The overall goal of the capstone project is to integrate the skills you have developed over the courses in this Specialization and to build a software package that can be used to work with the NOAA Significant Earthquakes dataset.
 
 ## Installation
